@@ -1,0 +1,22 @@
+{
+    "name": "squire-impl"
+  , "description": "Your own personal squire to boss around"
+  , "keywords": ["squire"]
+  , "version": "0.0.1"
+  , "homepage": "http://neocotic.com/squire"
+  , "author": "Alasdair Mercer <mercer.alasdair@gmail.com> (http://neocotic.com)"
+  , "bugs": {"url": "https://github.com/neocotic/squire/issues"}
+  , "repository": {
+        "type": "git"
+      , "url": "https://github.com/neocotic/squire.git"
+    }
+  , "licenses": [{
+        "type": "MIT"
+      , "url": "https://github.com/neocotic/squire/raw/master/LICENSE.md"
+    }]
+  , "dependencies": {
+        "squire": "0.0.1"
+      , "squire-behaviours": ">=0.0.1"
+      , "optparse": "1.0.3"
+    }
+}

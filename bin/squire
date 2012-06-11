@@ -1,0 +1,88 @@
+#!/usr/bin/env coffee
+
+# squire [options]
+#
+# Bring your Squire to life
+
+Fs       = require 'fs'
+OptParse = require 'optparse'
+Path     = require 'path'
+
+Squire   = require '..'
+
+SWITCHES = [
+  ['-a', '--alias ALIAS',             "Enable replacing the squire's name with alias"]
+  ['-b', '--build PATH',              'Build squire']
+  ['-h', '--help',                    'Display the help information']
+  ['-n', '--name NAME',               'The name of the squire']
+  ['-p', '--personality PERSONALITY', 'The personality to use']
+  ['-v', '--version',                 'Displays the version of squire installed']
+]
+
+Options =
+  alias: false
+  build: false
+  name: 'Squire'
+  path: '.'
+  personality: 'shell'
+
+Parser = new OptParse.OptionParser SWITCHES
+Parser.banner = 'Usage squire [options]'
+
+Parser.on 'alias', (opt, value) ->
+  Options.alias = value
+
+Parser.on 'build', (opt, value) ->
+  Options.build = true
+  Options.path = value
+
+Parser.on 'help', (opt, value) ->
+  console.log Parser.toString()
+  process.exit 0
+
+Parser.on 'name', (opt, value) ->
+  Options.name = value
+
+Parser.on 'personality', (opt, value) ->
+  Options.personality = value
+
+Parser.on 'version', (opt, value) ->
+  Options.version = true
+
+Parser.parse process.argv
+
+unless process.platform is 'win32'
+  process.on 'SIGTERM', ->
+    process.exit 0
+
+if Options.build
+  builder = new Squire.Builder Options.path
+  builder.start()
+else
+  personalityPath = Path.resolve __dirname, '..', 'src', 'personalities'
+
+  squire = Squire.summon personalityPath, Options.personality, Options.name
+
+  if Options.version
+    console.log squire.version
+    process.exit 0
+
+  squire.alias = Options.alias
+
+  loadBehaviours = ->
+    behavioursPath = Path.resolve '.', 'behaviours'
+    squire.load behavioursPath
+
+    behavioursPath = Path.resolve 'src', 'behaviours'
+    squire.load behavioursPath
+
+    behavioursFile = Path.resolve 'squire-behaviours.json'
+    Path.exists behavioursFile, (exists) =>
+      if exists
+        Fs.readFile behavioursFile, (err, data) ->
+          behavioursPath = Path.resolve 'node_modules', 'squire-behaviours', 'src', 'behaviours'
+          squire.loadBehaviours behavioursPath, JSON.parse data
+
+squire.personality.on 'ready', loadBehaviours
+
+squire.summon()
