@@ -16,6 +16,7 @@
     }]
   , "dependencies": {
         "coffee-script": "1.3.3"
+      , "date-ext": "1.0.2"
       , "log": "1.3.0"
       , "optparse": "1.0.3"
       , "scoped-http-client": "0.9.7"

@@ -1,12 +1,14 @@
-# Easily inspect the persisted memory.
+# Easily inspect Squire's memory.
 #
-# show memories - Displays what the squire remembers.
+# show memories - Tells you everything Squire remembers
 
 Util = require 'util'
 
 module.exports = (squire) ->
-squire.hear /// ^ (
-      show \s* memor(ies|y)
-    | what \s* (can|do) \s* you \s* remember \??
-  ) $ ///i, (msg) ->
-  msg.reply Util.inspect squire.brain.memories, false, 4
+
+  squire.hear /// ^ (
+        (display | list | show (\s+ me)?)
+        (\s+ your)? \s+ memor(ies | y)
+      | what \s+ (can | do) \s+ you \s+ remember \??
+    ) $ ///i, (msg) ->
+    msg.reply Util.inspect squire.brain.memories, false, 4

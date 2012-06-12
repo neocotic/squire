@@ -2,11 +2,14 @@
 #
 # These commands are grabbed from comment blocks at the top of each resource.
 #
-# help - Displays all of the help commands that Squire knows about.
-# help <query> - Displays all help commands that match <query>.
+# help - Gives help for all commands that Squire knows about
+# help <command> - Gives help for the command
 
 module.exports = (squire) ->
-  squire.hear /// ^ help \s* (.*)? $ ///i, (msg) ->
+
+  squire.hear /// ^
+      help \s* (.*)?
+    $ ///i, (msg) ->
     cmds = squire.helpCommands()
     if msg.match[1]
       cmds = cmds.filter (cmd) ->

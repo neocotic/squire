@@ -26,7 +26,21 @@ class Squire
     @commands    = []
     @listeners   = []
     @loadPaths   = []
-    @logger      = new Log process.env.SQUIRE_LOG_LEVEL or 'info'
+
+    if process.env.SQUIRE_LOG_LEVEL?
+      @logger = new Log process.env.SQUIRE_LOG_LEVEL
+    else
+      noop = ->
+      @logger =
+        alert: noop
+        critical: noop
+        debug: noop
+        emergency: noop
+        error: noop
+        info: noop
+        notice: noop
+        read: noop
+        warning: noop
 
     @buildVersion()
     @loadPersonality personalityPath, personality if personality?
@@ -34,15 +48,21 @@ class Squire
   # Private: Load help information from a loaded behaviour.
   #
   # path - A String path to the resource on disk.
+  # callback - An optional Function that is called with the extracted help.
   #
   # Returns nothing.
-  buildHelp: (path) ->
+  buildHelp: (path, callback) ->
     Fs.readFile path, 'utf-8', (err, body) =>
-      throw err if err?
-      for i, line of body.split '\n'
+      if err?
+        if callback? then callback err else throw err
+
+      results = for i, line of body.split '\n'
         break    unless line[0] is '#' or line.substr(0, 2) is '//'
         continue unless line.match '-'
-        @commands.push line[2..line.length]
+        line[2..line.length]
+
+      @commands.push results...
+      callback? null, results
 
   # Public: The version of Squire from npm.
   #
@@ -141,8 +161,8 @@ class Squire
   # Returns nothing.
   loadBehaviours: (path, behaviours) ->
     @logger.debug "Loading behaviours from #{path}"
-    for behaviour in behaviours
-      @loadResource path, behaviour
+
+    @loadResource path, behaviour for behaviour in behaviours
 
   # Load the personality Squire is going to use.
   #
@@ -172,6 +192,7 @@ class Squire
   loadResource: (path, resource) ->
     ext  = Path.extname resource
     full = Path.join path, Path.basename resource, ext
+
     if ext in ['.coffee', '.js']
       try
         require(full) @
