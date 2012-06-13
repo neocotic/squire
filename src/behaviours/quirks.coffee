@@ -2,8 +2,8 @@
 #   Quirky commands for Squire.
 #
 # Commands:
-#   age - Tells you the age of your Squire
-#   dismiss - Dismisses your Squire
+#   age - Tells you the age of Squire
+#   dismiss - Dismisses Squire
 #   evaluate <expression> - Evaluates the expression
 
 Vm = require 'vm'
