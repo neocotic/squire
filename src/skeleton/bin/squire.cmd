@@ -2,6 +2,8 @@
 
 setLocal enableDelayedExpansion
 
-node "%~dp0\..\node_modules\squire\node_modules\coffee-script\bin\coffee" "%~dp0\..\node_modules\squire\bin\squire" %*
+pushd "%~dp0\.."
+	node .\node_modules\squire\node_modules\coffee-script\bin\coffee .\node_modules\squire\bin\squire %*
+popd
 
 endLocal&exit /b
