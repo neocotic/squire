@@ -1,6 +1,8 @@
-# Easily inspect Squire's memory.
+# Description:
+#   Easily inspect Squire's memory.
 #
-# show memories - Tells you everything Squire remembers
+# Commands:
+#   show memories - Tells you everything Squire remembers
 
 Util = require 'util'
 

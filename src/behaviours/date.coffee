@@ -1,24 +1,29 @@
-# Teach Squire how to tell the date and time.
+# Description:
+#   Teach Squire how to tell the date and time.
 #
-# date - Tells you todays date
-# now - Tells you the current date and time
-# time - Tells you the current time
+# Commands:
+#   date - Tells you todays date
+#   now - Tells you the current date and time
+#   time - Tells you the current time
+
+# Dependencies:
+#   date-ext >= 1.0.2
 
 require 'date-ext'
 
 module.exports = (squire) ->
 
   formatDate = (date = new Date()) ->
-    date.format 'l jS of F in the year Y'
+    date.format 'l jS \\of F \\i\\n \\t\\h\\e \\y\\e\\a\\r Y'
 
   formatTime = (date = new Date()) ->
     hours = date.getHours()
     mins  = date.getMinutes()
 
     str   = if mins is 1
-      '1 minute after '
+      '1 minute past '
     else if mins > 1
-      "#{mins} minutes after "
+      "#{mins} minutes past "
     else
       ''
 
@@ -42,22 +47,22 @@ module.exports = (squire) ->
             (\'?s | \s+ is) \s+ (it | this)
           | \s+ am \s+ i
           | \s+ are \s+ we
-        ) \??
-    ) $ ///i, (msg) ->
+        )
+    ) \?? $ ///i, (msg) ->
     msg.reply "It is #{formatDate()} at around #{formatTime()}."
 
   squire.hear /// ^ (
         date
       | (what(\'?s | \s+ is) | tell \s+ me)
-        \s+ the \s+ ((current \s+)? time | time \s+ now) \??
-      | what \s+ time \s+ is \s+ it \??
-    ) $ ///i, (msg) ->
+        \s+ (today\'?s | the) \s+ date (\s+ today)?
+      | what \s+ date \s+ is \s+ it
+    ) \?? $ ///i, (msg) ->
     msg.reply "Today is #{formatDate()}."
 
   squire.hear /// ^ (
         time
       | (what(\'?s | \s+ is) | tell \s+ me)
-        \s+ the \s+ ((current \s+)? time | time \s+ now) \??
-      | what \s+ time \s+ is \s+ it \??
-    ) $ ///i, (msg) ->
+        \s+ the \s+ ((current \s+)? time | time \s+ now)
+      | what \s+ time \s+ is \s+ it
+    ) \?? $ ///i, (msg) ->
     msg.reply "I reckon it's about #{formatTime()}."

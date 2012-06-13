@@ -1,8 +1,10 @@
-# Quirky commands for Squire.
+# Description:
+#   Quirky commands for Squire.
 #
-# age - Tells you the age of your Squire
-# dismiss - Dismisses your Squire
-# evaluate <expression> - Evaluates the expression
+# Commands:
+#   age - Tells you the age of your Squire
+#   dismiss - Dismisses your Squire
+#   evaluate <expression> - Evaluates the expression
 
 Vm = require 'vm'
 

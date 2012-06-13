@@ -5,8 +5,34 @@ Personality   = require '../personality'
 
 class Shell extends Personality
 
-  ask: (question, callback) ->
-    @repl.question "#{question} ", callback
+  ask: (question, secret, callback) ->
+    if 'function' is typeof secret
+      callback = secret
+      secret   = no
+
+    if secret
+      buffer    = ''
+      listeners = @repl.input.listeners('keypress')[..]
+
+      @repl.output.write "\n#{question} "
+
+      @repl.input.removeAllListeners 'keypress'
+      @repl.input.on 'keypress', (c, key) =>
+        if key and 'enter' is key.name
+          @repl.output.write '\n'
+          @repl.input.removeAllListeners 'keypress'
+          @repl.input.on 'keypress', listener for listener in listeners
+          callback? buffer
+          return
+
+        if key and key.ctrl and 'c' is key.name
+          @repl.output.write buffer
+          process.exit 0
+
+        @repl.output.write ''
+        buffer += c
+    else
+      @repl.question "#{question} ", callback
 
   reply: (strings...) ->
     @send strings...
@@ -34,8 +60,10 @@ class Shell extends Personality
 
     @repl.on 'line', (buffer) =>
       @repl.close() if buffer.toLowerCase() is 'exit'
-      @repl.prompt()
       @receive new TextMessage buffer
+
+    @squire.catchAll (msg) =>
+      @reply 'Huh?'
 
     @emit 'ready'
     @repl.setPrompt "#{@squire.name}> "

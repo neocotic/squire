@@ -45,6 +45,17 @@ class Squire
     @buildVersion()
     @loadPersonality personalityPath, personality if personality?
 
+  # Public: A helper ask Function which delegates to the personality's ask
+  # Function.
+  #
+  # question - A String question.
+  # secret   - Whether the input should be invisible.
+  # callback - A Function that is triggered when the question is answered.
+  #
+  # Returns nothing.
+  ask: (question, secret, callback) ->
+    @personality.ask question, secret, callback
+
   # Private: Load help information from a loaded behaviour.
   #
   # path - A String path to the resource on disk.
@@ -59,7 +70,7 @@ class Squire
       results = for i, line of body.split '\n'
         break    unless line[0] is '#' or line.substr(0, 2) is '//'
         continue unless line.match '-'
-        line[2..line.length]
+        line[2..line.length].trim()
 
       @commands.push results...
       callback? null, results
@@ -80,7 +91,7 @@ class Squire
   # Returns nothing.
   catchAll: (callback) ->
     @listeners.push new Listener @, (msg) ->
-      msg instanceof Squire.CatchAllMessage
+      msg instanceof CatchAllMessage
     , (msg) ->
       msg.message = msg.message.message
       callback msg
@@ -122,7 +133,7 @@ class Squire
   #       .header('Authorization', 'foo bar')
   #
   #       # Set multiple headers
-  #       .headers(Authorization: 'bearer abcdef', Accept: 'application/json')
+  #       .headers(Authorization: 'foo bar', Accept: 'application/json')
   #
   #       # Add URI query parameters
   #       .query(a: 1, b: 'foo & bar')
@@ -198,7 +209,7 @@ class Squire
         require(full) @
         @buildHelp "#{path}/#{resource}"
       catch err
-        @logger.error "#{err}"
+        @logger.error "Unable to load #{full}: #{err}\n#{err.stack}"
 
   # Public: A helper reply Function which delegates to the personality's reply
   # Function.
@@ -224,8 +235,8 @@ class Squire
       catch err
         @logger.error "Unable to call the listener: #{err}"
         false
-    if message not instanceof Squire.CatchAllMessage and true not in results
-      @receive new Squire.CatchAllMessage message
+    if message not instanceof CatchAllMessage and true not in results
+      @receive new CatchAllMessage message
 
   # Public: Adds a Listener that attempts to match incoming messages directed
   # at the squire based on the given `regex`. All regexes treat patterns like

@@ -12,11 +12,12 @@ class Response
   # Public: Request an answer to the given `question`.
   #
   # question - A String question.
+  # secret   - Whether the input should be invisible.
   # callback - A Function that is triggered when the question is answered.
   #
   # Returns nothing.
-  ask: (question, callback) ->
-    @squire.personality.ask question, callback
+  ask: (question, secret, callback) ->
+    @squire.personality.ask question, secret, callback
 
   # Public: Tell the message to stop dispatching to listeners.
   #

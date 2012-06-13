@@ -1,9 +1,12 @@
-# Generates help commands for Squire.
+# Description:
+#   Generates help commands for Squire.
 #
-# These commands are grabbed from comment blocks at the top of each resource.
+# Commands:
+#   help - Gives help for all commands that Squire knows about
+#   help <query> - Gives help for the queried command(s)
 #
-# help - Gives help for all commands that Squire knows about
-# help <command> - Gives help for the command
+# Notes:
+#   These commands are grabbed from comment blocks at the top of each resource.
 
 module.exports = (squire) ->
 
@@ -14,7 +17,8 @@ module.exports = (squire) ->
     if msg.match[1]
       cmds = cmds.filter (cmd) ->
         cmd.match new RegExp msg.match[1], 'i'
-    emit = cmds.join '\n'
+
+    output = cmds.join '\n'
     unless squire.name is 'Squire'
-      emit = emit.replace /(S|s)quire/g, squire.name
-    msg.reply emit
+      output = output.replace /(S|s)quire/g, squire.name
+    msg.reply output
