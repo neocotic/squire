@@ -6,7 +6,8 @@
 #   dismiss - Dismisses Squire
 #   evaluate <expression> - Evaluates the expression
 
-Vm = require 'vm'
+Util = require 'util'
+Vm   = require 'vm'
 
 module.exports = (squire) ->
 
@@ -47,7 +48,7 @@ module.exports = (squire) ->
       | evaluate
     ) \s+ (.+) $ ///i, (msg) ->
     try
-      msg.reply "#{Vm.runInNewContext msg.match[2]}"
+      msg.reply Util.inspect Vm.runInNewContext msg.match[2]
     catch err
       msg.reply "That don't make no sense! #{err}\n#{err.stack}"
 
@@ -80,6 +81,7 @@ module.exports = (squire) ->
     msg.reply 'Always by your side, through thick and thin.'
 
   squire.hear /// ^
-      who \s+ am \s+ i \??
+      (what \s+ age | who)
+      \s+ am \s+ i \??
     $ ///i, (msg) ->
     msg.reply 'You should know.'
