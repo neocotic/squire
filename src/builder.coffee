@@ -62,6 +62,7 @@ class Builder
 
     files = [
       'bin/squire'
+      'bin/squire.cmd'
       '.gitignore'
       '.npmignore'
       'package.json'
