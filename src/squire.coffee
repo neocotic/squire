@@ -49,12 +49,11 @@ class Squire
   # Function.
   #
   # question - A String question.
-  # secret   - Whether the input should be invisible.
   # callback - A Function that is triggered when the question is answered.
   #
   # Returns nothing.
-  ask: (question, secret, callback) ->
-    @personality.ask question, secret, callback
+  ask: (question, callback) ->
+    @personality.ask question, callback
 
   # Private: Load help information from a loaded behaviour.
   #

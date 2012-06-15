@@ -11,12 +11,10 @@ class Personality extends EventEmitter
   # this.
   #
   # question - A String question.
-  # secret   - Whether the input should be invisible.
   # callback - A Function that is triggered when the question is answered.
   #
   # Returns nothing.
-  ask: (question, secret, callback) ->
-    callback = secret if 'function' is typeof secret
+  ask: (question, callback) ->
     callback?()
 
   # Public: Creates a scoped HTTP client with chainable methods for modifying

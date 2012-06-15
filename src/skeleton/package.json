@@ -15,7 +15,8 @@
       , "url": "https://github.com/neocotic/squire/raw/master/LICENSE.md"
     }]
   , "dependencies": {
-        "squire": "0.0.1"
+        "date-ext": "1.0.2"
+      , "squire": "0.0.1"
       , "squire-behaviours": ">=0.0.1"
     }
 }

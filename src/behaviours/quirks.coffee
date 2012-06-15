@@ -16,7 +16,12 @@ module.exports = (squire) ->
       | (what \s+ age | how \s+ old) \s+ are \s+ you
       | when \s+ were \s+ you \s+ born
     ) \?? $ ///i, (msg) ->
-    msg.reply "I am #{process.uptime().toFixed 0} seconds old."
+    seconds = process.uptime().toFixed 0
+    msg.reply [
+      "I am #{seconds.bold} second"
+      if seconds is '1' then '' else 's'
+      ' old.'
+    ].join ''
 
   squire.hear /// ^ (
         greetings

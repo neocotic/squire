@@ -1,3 +1,4 @@
+Colors        = require 'colors'
 Readline      = require 'readline'
 
 Personality   = require '../personality'
@@ -5,37 +6,16 @@ Personality   = require '../personality'
 
 class Shell extends Personality
 
-  ask: (question, secret, callback) ->
-    if 'function' is typeof secret
-      callback = secret
-      secret   = no
-
-    if secret
-      buffer    = ''
-      listeners = @repl.input.listeners('keypress')[..]
-
-      @repl.output.write "\n#{question} "
-
-      @repl.input.removeAllListeners 'keypress'
-      @repl.input.on 'keypress', (c, key) =>
-        if key and 'enter' is key.name
-          @repl.output.write '\n'
-          @repl.input.removeAllListeners 'keypress'
-          @repl.input.on 'keypress', listener for listener in listeners
-          callback? buffer
-          return
-
-        if key and key.ctrl and 'c' is key.name
-          @repl.output.write buffer
-          process.exit 0
-
-        @repl.output.write ''
-        buffer += c
+  ask: (question, callback) ->
+    if @_questionCallback
+      @repl.prompt()
     else
-      @repl.question "#{question} ", callback
+      @repl.setPrompt "#{question} "
+      @_questionCallback = callback
+      @repl.prompt()
 
   reply: (strings...) ->
-    @send strings...
+    @send strings..., ''
     @repl.prompt()
 
   send: (strings...) ->
@@ -45,6 +25,7 @@ class Shell extends Personality
       console.log "#{str}" for str in strings
 
   start: ->
+    prompt = "#{@squire.name}> "
     stdin  = process.openStdin()
     stdout = process.stdout
 
@@ -59,14 +40,20 @@ class Shell extends Personality
       process.exit 0
 
     @repl.on 'line', (buffer) =>
-      @repl.close() if buffer.toLowerCase() is 'exit'
-      @receive new TextMessage buffer
+      if @_questionCallback
+        callback = @_questionCallback
+        @_questionCallback = null
+        @repl.setPrompt prompt
+        callback buffer
+      else
+        @repl.close() if buffer.toLowerCase() is 'exit'
+        @receive new TextMessage buffer
 
     @squire.catchAll (msg) =>
       @reply 'Huh?'
 
     @emit 'ready'
-    @repl.setPrompt "#{@squire.name}> "
+    @repl.setPrompt prompt
     @repl.prompt()
 
 exports.use = (squire) ->
