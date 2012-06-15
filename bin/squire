@@ -69,7 +69,7 @@ else
 
   squire.alias = Options.alias
 
-  loadBehaviours = ->
+  squire.personality.on 'ready', ->
     behavioursPath = Path.resolve '.', 'behaviours'
     squire.load behavioursPath
 
@@ -77,12 +77,9 @@ else
     squire.load behavioursPath
 
     behavioursFile = Path.resolve 'squire-behaviours.json'
-    Path.exists behavioursFile, (exists) =>
-      if exists
-        Fs.readFile behavioursFile, (err, data) ->
-          behavioursPath = Path.resolve 'node_modules', 'squire-behaviours', 'src', 'behaviours'
-          squire.loadBehaviours behavioursPath, JSON.parse data
+    if Path.existsSync behavioursFile, 
+      Fs.readFile behavioursFile, (err, data) ->
+        behavioursPath = Path.resolve 'node_modules', 'squire-behaviours', 'src', 'behaviours'
+        squire.loadBehaviours behavioursPath, JSON.parse data
 
-squire.personality.on 'ready', loadBehaviours
-
-squire.summon()
+  squire.summon()
